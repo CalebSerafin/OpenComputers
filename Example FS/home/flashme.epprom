@@ -1,0 +1,6 @@
+local init 
+do
+  computer.beep(450,1)
+  computer.beep(900,0.5)
+end
+init()
