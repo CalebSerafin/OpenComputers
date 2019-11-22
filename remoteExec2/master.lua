@@ -1,5 +1,5 @@
 ----------------------Config----------------------
-local addr=nil	--Direct reciever card
+local addr=nil	--Direct recipient address
 local port=2852	--Port used
 local dist=400	--Maxium, inclusive
 local pass="P0r2DruPG7xokYqh"	--2nd Packet
@@ -29,7 +29,8 @@ while true do
 	if cmd then									--If not nil
 		if addr then modem.send(addr, port, cmd, pass)
 		else modem.broadcast(port, cmd, pass)	end
-		print(select(6, event.pull(5, "modem_message")))
+		local _,_,addrX,portX,distanceX,feedback,passX=event.pull(5, "modem_message")
+		io.write(addrX.."> ") print(feedback)
 	end
 end
 term.clear()
