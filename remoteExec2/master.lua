@@ -1,8 +1,8 @@
 ----------------------Config----------------------
 local addr=nil	--Direct recipient address
-local port=2852	--Port used
-local dist=400	--Maxium, inclusive
-local pass="P0r2DruPG7xokYqh"	--2nd Packet
+local port=2852	--Send and listen on this port
+local dist=nil	--Modem strength, almost==distance
+local pass="P0r2DruPG7xokYqh"	--2nd data packet
 -------------------Declarations-------------------
 local component = require("component")
 local event = require("event")
@@ -16,6 +16,7 @@ dist=tonumber(arg:match("-dist=(%d*)")) or dist
 pass=arg:match("-pass=(%w*)") or pass
 --------------------Modem Setup-------------------
 modem.open(port)
+dist = dist or modem.getStrength()
 modem.setStrength(dist)
 -----------------------Meat-----------------------
 term.clear()
@@ -29,8 +30,9 @@ while true do
 	if cmd then									--If not nil
 		if addr then modem.send(addr, port, cmd, pass)
 		else modem.broadcast(port, cmd, pass)	end
-		local _,_,addrX,portX,distanceX,feedback,passX=event.pull(5, "modem_message")
-		io.write(addrX.."> ") print(feedback)
+		--{event,addr,addrX,portX,distX,data[Table]}
+		local _,_,addrX,_,_,feedback,passX=event.pull(1, "modem_message")
+		if passX==pass then io.write(addrX.."> ") print(feedback) end
 	end
 end
 term.clear()
