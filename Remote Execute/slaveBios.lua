@@ -1,4 +1,6 @@
 local m=component.proxy(component.list("modem")())
+
+
 m.open(2412)
 local function respond(...)
   local args=table.pack(...)

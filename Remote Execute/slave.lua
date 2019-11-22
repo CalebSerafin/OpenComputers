@@ -9,8 +9,7 @@ end
 local function receive()
   while true do
     local evt,_,_,_,_,cmd=computer.pullSignal()
-		if (cmd==':q!') then return nil, ':q!'
-		elseif evt=="modem_message" then return load(cmd) end
+		if evt=="modem_message" then return load(cmd) end
   end
 end
 while true do
@@ -20,10 +19,4 @@ while true do
     respond(result())
   end)
 	if not result then respond(reason) end
-	if (reason==':q!') then 
-		print('==================================================')
-		print('      All netwoked remoteExec clients closed.     ')
-		print('==================================================')
-		break
-	end
 end
