@@ -1,34 +1,30 @@
 ----------------------Config----------------------
 local addr=nil	--Direct sender card
-local port=2412	--Port used
+local port=2852	--Port used
 local dist=400	--Maxium, inclusive
-local auth=nil	--2nd Packet
---------------------End Config--------------------
-local component = require("component")
+local pass="P0r2DruPG7xokYqh"	--2nd Packet
+-------------------Declarations-------------------
+--Compensate for microcontrolers on same net.
+_G.component = require("component")
+_G.computer = require("computer")
+_G.process = require("process")
+_G.unicode = require("unicode")
 local event = require("event")
-local modem=component.proxy(component.list("modem")())
-
+local modem = component.modem
+-----------------------Meat-----------------------
 modem.open(port)
-local function respond(...)
-  local args=table.pack(...)
-  pcall(function() modem.broadcast(port, table.unpack(args)) end)
-end
-local function receive()
-	while true do
-		--"modem_message",local addr,foreign addr,port,distance,packet1[,.*packet8]
-    local _,_,addrX,portX,distanceX,cmdX,authX=event.pull(math.huge, "modem_message")
-		auth = auth or authX
-		if (addr and addrX~=addr) or portX~=port or distanceX>dist or (auth and authX~=auth) then return end
-		print(addrX.."> "..cmdX)
-		return cmdX
-  end
+local function listen()
+	--{"modem_message",local addr,foreign addr,port,distance,packet1[,.*packet8]}
+	local _,_,addrX,portX,distanceX,cmdX,passX=event.pull(math.huge, "modem_message")
+	if (addr and addrX~=addr) or portX~=port or distanceX>dist or (pass and passX~=pass) then return end
+	return cmdX
 end
 while true do
-	local cmd = receive()
-	if cmd then
-		local result,feedback=pcall(function()
-			return load(cmd)()
-		end)
-		respond(feedback)
+	local func, errors = load(listen())
+	if func then
+		local _, feedback=pcall(func)
+		modem.broadcast(port, feedback)
+	else
+		modem.broadcast(port, errors)
 	end
 end
