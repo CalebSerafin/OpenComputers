@@ -141,7 +141,7 @@ hardnessTable.table = {
 	['stonebrickstairs'] = 1.5,
 	['purpurblock'] = 1.5,
 	['purpurpillar'] = 1.5,
-    ['coralblock'] = 1.5,
+  ['coralblock'] = 1.5,
 	
 	['glazedterracotta'] = 1.4,
 
@@ -226,7 +226,7 @@ hardnessTable.table = {
 	['soulsand'] = 0.5,
 	['magmablock'] = 0.5,
 	['concretepowder'] = 0.5,
-    ['driedkelpblock'] = 0.5,
+  ['driedkelpblock'] = 0.5,
 	
 	['cactus'] = 0.4,
 	['ladder'] = 0.4,
@@ -305,10 +305,10 @@ hardnessTable.table = {
 	['beetrootseed'] = 0,
 	['endrod'] = 0,
 	['structurevoid'] = 0,
-    ['coral'] = 0,
-    ['coralfan'] = 0,
-    ['honeyblock'] = 0,
-	-- BLOCKS BELOW THIS LINE ARE UNBREAKABLE IN SURVIVAL & ADVENTURE MODE --
+  ['coral'] = 0,
+  ['coralfan'] = 0,
+  ['honeyblock'] = 0,
+	-- BLOCKS BELOW THIS LINE ARE UNBREAKABLE
 	['barrier'] = -1,
 	['bedrock'] = -1,
 	['invisiblebedrock'] = -1,
@@ -324,11 +324,12 @@ hardnessTable.table = {
 	['block36'] = -1,
 	['jigsawblock'] = -1,
 	['structureblock'] = -1,
-	-- ['structureblockexport'] = -1
+	['structureblockexport'] = -1
 }
 
+--Use this to find possible blocks by the known hardness level.
 function hardnessTable.getBlocks(hardness)
-	hardness = math.floor(hardness*10 + 0.5)/10
+	hardness = math.floor(hardness*10 + 0.5)/10	--Due to rounding it is comomon for the supplied hardness to have an error.
 	local matchingBlocks = {}
 	for k,v in pairs(hardnessTable.table) do
 		if (v == hardness) then

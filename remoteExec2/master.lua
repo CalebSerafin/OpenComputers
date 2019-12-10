@@ -1,8 +1,32 @@
+--[[
+MIT License
+
+Copyright (c) 2019 Caleb Serafin
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+]]
+
 ----------------------Config----------------------
-local addr=nil	--Direct recipient address
+local addr=nil	--Provide the slave's network card address
 local port=2852	--Send and listen on this port
-local dist=nil	--Modem strength, almost==distance
-local pass="P0r2DruPG7xokYqh"	--2nd data packet
+local dist=nil	--Modem strength
+local pass="P0r2DruPG7xokYqh"	--Should be the 2nd data packet
 -------------------Declarations-------------------
 local component = require("component")
 local event = require("event")
@@ -18,7 +42,7 @@ pass=arg:match("-pass=(%w*)") or pass
 modem.open(port)
 dist = dist or modem.getStrength()
 modem.setStrength(dist)
------------------------Meat-----------------------
+-----------------------Body-----------------------
 term.clear()
 print('╔════════════════════════════════════════════════╗')
 print('║    Execute code on remoteExec slaves nearby.   ║')
@@ -26,12 +50,11 @@ print('║                Enter :q to quit.               ║')
 print('╚════════════════════════════════════════════════╝')
 while true do
 	local cmd=io.read()
-	if cmd==":q" then break end	--Exit Code
-	if cmd then									--If not nil
+	if cmd==":q" then break end
+	if cmd then				--Avoid sending a nil packet
 		if addr then modem.send(addr, port, cmd, pass)
-		else modem.broadcast(port, cmd, pass)	end
-		--{event,addr,addrX,portX,distX,data[Table]}
-		local _,_,addrX,_,_,feedback,passX=event.pull(1, "modem_message")
+		else modem.broadcast(port, cmd, pass)	end	--pass is still required to prevent the slave from attempting to execute arbitrary messages.
+		local _,_,addrX,_,_,feedback,passX=event.pull(1, "modem_message")	--Captures the address to differentiate between multiple slaves.
 		if passX==pass then io.write(addrX.."> ") print(feedback) end
 	end
 end
