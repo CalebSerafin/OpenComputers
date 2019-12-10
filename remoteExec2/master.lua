@@ -35,6 +35,7 @@ local term = require('term')
 local modem = component.modem
 local arg = ... or " "
 ---------------------Arguments--------------------
+--Arguments should be provided in the format "-KEY=VALUE". Spaces are not required. Falls back to defualt values if not all args are given.
 addr=arg:match("-addr=(%w*)") or addr
 port=tonumber(arg:match("-port=(%d*)")) or port
 dist=tonumber(arg:match("-dist=(%d*)")) or dist
