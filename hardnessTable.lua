@@ -1,3 +1,4 @@
+--Version: 2.1
 local hardnessTable = {}
 
 --Arranged from greatest hardness to least hardness.
